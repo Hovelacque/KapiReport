@@ -1,0 +1,31 @@
+<button mat-button mat-raised-button color="primary" (click)="change()">Update</button>
+<div>
+  <div>
+    <div>
+      <div style="display: block">
+   <canvas baseChart
+          [data]="pieChartData"
+          [labels]="pieChartLabels"
+          [chartType]="pieChartType"
+          [options]="pieChartOptions"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button mat-button mat-raised-button color="primary" (click)="randomize()">Update</button>
+<div>
+  <div>
+    <div>
+      <div style="display: block">
+        <canvas baseChart 
+		[datasets]="barChartData" 
+		[labels]="barChartLabels" 
+		[options]="barChartOptions"
+          	[legend]="barChartLegend"
+		[chartType]="barChartType" 
+          	(chartClick)="chartClicked($event)"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
