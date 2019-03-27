@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ChartDataSets, ChartOptions, ChartType} from 'chart.js';
-import { Color, BaseChartDirective, Label } from 'ng2-charts';
+import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-root',
@@ -8,65 +8,66 @@ import { Color, BaseChartDirective, Label } from 'ng2-charts';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
-	
-//pie......................
-  public pieChartLabels:string[] = ["Pending", "InProgress", "OnHold", "Complete", "Cancelled"];
-  public pieChartData:number[] = [21, 39, 10, 14, 16];
-  public pieChartType:string = 'pie';
-  public pieChartOptions:any = {'backgroundColor': [
-               "#FF6384",
-            "#4BC0C0",
-            "#FFCE56",
-            "#E7E9ED",
-            "#36A2EB"
-            ]}
 
-  public change(): void {
-	switch(this.pieChartType){
-		case 'pie':
-			this.pieChartType = 'polarArea';
-		break;			
-		case 'polarArea':
-			this.pieChartType = 'doughnut';
-		break;
-		case 'doughnut':
-			this.pieChartType = 'pie';
-		break;
-	}
-  }
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective;
 
+  active = false;
 
-//Bar, line ...........
-  public barChartOptions: ChartOptions = {
-    responsive: true,
-    // We use these empty structures as placeholders for dynamic theming.
-    scales: { xAxes: [{}], yAxes: [{}] },
-  };
-  public barChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
-  public barChartType: ChartType = 'bar';
-  public barChartLegend = true;
-
-  public barChartData: ChartDataSets[] = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
-    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' }
+  tipos: any[] = [
+    { value: 'pie', title: 'Pie' },
+    { value: 'polarArea', title: 'Polar Area' },
+    { value: 'doughnut', title: 'Doughnut' },
+    { value: 'bar', title: 'Bar' },
+    { value: 'line', title: 'Line' },
+    { value: 'radar', title: 'Radar' }
   ];
 
-  public randomize(): void {
-	switch(this.barChartType){
-		case 'bar':
-			this.barChartType = 'line';
-		break;	
-		case 'line':
-			this.barChartType = 'radar';
-		break;	
-		case 'radar':
-			this.barChartType = 'doughnut';
-		break;
-		case 'doughnut':
-			this.barChartType = 'bar';
-		break;
-	}
+  public chartOptions: ChartOptions = {
+    responsive: true,
+    scales: { xAxes: [{}], yAxes: [{}] }
+  };
+  public chartLabels: string[] = [];
+  public chartType: ChartType = 'bar';
+  public chartLegend = true;
+
+  public chartData: ChartDataSets[] = [];
+
+  constructor(
+    private chRef: ChangeDetectorRef
+  ) { }
+
+  add(): void {
+    const data: number[] = [] as number[];
+    for (var i = 0; i < this.chartLabels.length; i++)
+      data.push(this.generateNumber(i));
+
+    this.chartData.push({
+      data, label: `Series ${this.chartData.length + 1}`
+    });
+
+    this.active = true;
+    if (!this.chRef['destroyed']) {
+      this.chRef.detectChanges();
+    }
+    this.chart.ngOnChanges({});
   }
 
+  public addLabel() {
+    this.chartData.forEach((x, i) => {
+      const num = this.generateNumber(i);
+      const data: number[] = x.data as number[];
+      data.push(num);
+    });
+    this.chartLabels.push(`Label ${this.chartLabels.length}`);
+
+    this.active = true;
+    if (!this.chRef['destroyed']) {
+      this.chRef.detectChanges();
+    }
+    this.chart.update();
+  }
+
+  private generateNumber(i: number) {
+    return Math.floor((Math.random() * (i < 2 ? 100 : 1000)) + 1);
+  }
 }

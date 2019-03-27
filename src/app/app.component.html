@@ -1,31 +1,13 @@
-<button mat-button mat-raised-button color="primary" (click)="change()">Update</button>
-<div>
-  <div>
-    <div>
-      <div style="display: block">
-   <canvas baseChart
-          [data]="pieChartData"
-          [labels]="pieChartLabels"
-          [chartType]="pieChartType"
-          [options]="pieChartOptions"></canvas>
-      </div>
-    </div>
+<div class="row">
+  <div class="col-lg-4">
+    <select [(ngModel)]="chartType">
+      <option *ngFor="let item of tipos" [value]="item.value">{{item.title}}</option>
+    </select>
+    <button mat-button mat-raised-button color="primary" (click)="add()">add serie</button>
+    <button mat-button mat-raised-button color="primary" (click)="addLabel()">Add label</button>
   </div>
-</div>
-
-<button mat-button mat-raised-button color="primary" (click)="randomize()">Update</button>
-<div>
-  <div>
-    <div>
-      <div style="display: block">
-        <canvas baseChart 
-		[datasets]="barChartData" 
-		[labels]="barChartLabels" 
-		[options]="barChartOptions"
-          	[legend]="barChartLegend"
-		[chartType]="barChartType" 
-          	(chartClick)="chartClicked($event)"></canvas>
-      </div>
-    </div>
+  <div *ngIf="active" class="col-lg-8">
+    <canvas height="150" baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions"
+      [legend]="chartLegend" [chartType]="chartType" (chartClick)="chartClicked($event)"></canvas>
   </div>
 </div>
